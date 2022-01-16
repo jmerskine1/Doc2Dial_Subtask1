@@ -1,0 +1,7 @@
+src/data_cache/
+src/d2dQA-env/
+src/pycache/
+src/doc2vec_models/
+src/d2dQA/
+src/hft_models/
+data_cache/
