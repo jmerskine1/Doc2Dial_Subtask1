@@ -88,7 +88,9 @@ class HFTTraining():
         )
         
         trainer.train()
+        eval_loader = trainer.get_eval_dataloader
         path = "./hft_models/doc" + str(i) + "_model.pt"
+        # torch.save(trainer,path)
         trainer.save_model(path)
 
 class ModelGenerator:
@@ -157,10 +159,10 @@ class ModelGenerator:
 
                 PATH = "./hft_models/doc" + str(i) + "_model.pt"
                 
-                if os.path.isfile(PATH):
+                if os.path.isdir(PATH):
                     model = i
-                    continue
                 else:
+                    print("i couldn't find :", str(i))
                     train_index     = [i for i, x in enumerate(titles) if x == doc_id]
                     train_questions = [questions[i] for i in train_index]
                     train_answers   = [answers[i] for i in train_index]
@@ -176,7 +178,6 @@ class ModelGenerator:
                     #torch.save(model, path)
             elif model_type == 'hft' and count == 0:
                 model =[]
-                continue
             else:
                 print("No Training: Incorrect model selection")
 
@@ -277,6 +278,7 @@ class GoldenRetriever:
 
         if self.model_type == "BM25":
             scores = model.get_scores(tokens)
+
         elif self.model_type == "d2v":
             scores = []
             for i in range(0,len(res_spans)):
@@ -284,7 +286,14 @@ class GoldenRetriever:
                 query_vector = model.infer_vector(tokens)
                 span_vector = model.infer_vector(res_spans[i])
                 scores.append(self.similarity(query_vector,span_vector))
-                            
+        elif self.model_type == "hft":
+            idx = [(i) for i, d_id in enumerate(self.doc_ids) if q_id == d_id]
+            
+            PATH = "./hft_models/doc" + str(idx) + "_model.pt"
+            model = torch.load(PATH)
+            model.eval()
+
+                
 
         pairs = [(s, i) for i, s in enumerate(scores)]
         pairs.sort(reverse=True)
