@@ -17,7 +17,7 @@ from datasets import load_metric
 from importlib import reload
 
 import spacy
-from components import TorchQADataset, HFTTraining, ModelGenerator, QueryProcessor, GoldenRetriever #, DocumentRetriever, PassageRetrieval, AnswerExtractor
+from components import ModelGenerator, QueryProcessor, GoldenRetriever #, DocumentRetriever, PassageRetrieval, AnswerExtractor
 
 from metric import sharedtask1_metrics
 
@@ -69,7 +69,7 @@ dia_dataset = load_dataset(
     cache_dir=cache_dir
     )
 
-rc_dataset = train_dataset_sample    
+rc_dataset = train_dataset    
 
 print(f"Train dataset with {len(train_dataset)} instances loaded")
 print(f"Train sample dataset with {len(train_dataset_sample)} instances loaded")
@@ -138,8 +138,6 @@ for i in tqdm(range(0,len(rc_dataset))):
     if correctTag == False:
         no_answer = no_answer + [1]
         
-
-
     test_predictions.append(
         {
             "id": ex["id"],
